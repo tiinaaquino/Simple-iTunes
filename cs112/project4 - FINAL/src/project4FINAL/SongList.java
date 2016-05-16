@@ -3,55 +3,62 @@ package project4FINAL;
 //import lab7.Link;
 
 public class SongList {
-	private SongNode head, tail;
-	
-	public SongList()
-	{
+	private SongNode head;
+	private int size;
+
+	public SongList() {
 		head = null;
-		tail = null;
+		size = 0;
 	}
-	
-	//insert at front
-	
+
 	// insert
-	public void insertOld(Song newSong)
-	{
-		SongNode curr = head;
-		while (curr.next() != null)
-		{
-			
-		}
-	}
-	
 	public void insert(Song newSong) {
-		SongNode newLink = new SongNode(newSong);
-		if (tail != null) {
-			tail.setNext(newLink);
-			tail = newLink;
-		} 
-		else { // when the list is empty
-			head =  tail = newLink;
+		if (head == null) {
+			head = new SongNode(newSong);
+		} else {
+			insertHelper(newSong);
+		}
+		size++;
+	}
+
+	// insert alaphabetically
+	private void insertHelper(Song aSong) {
+		SongNode parent = null;
+		SongNode child = head;
+		while (child != null && child.elem().compareTo(aSong) < 0) {
+			parent = child;
+			child = child.next();
+		}
+		if (parent == null) {
+			SongNode node = new SongNode(aSong);
+			node.setNext(child);
+			head = node;
+		} else {
+			if (child == null) {
+				SongNode newNode = new SongNode(aSong);
+				parent.setNext(newNode);
+			} else {
+				SongNode other = new SongNode(aSong);
+				parent.setNext(other);
+				other.setNext(child);
+			}
 		}
 	}
-	
+
+	public int size() {
+		return size;
+	}
+
 	// find
-	
-	// is sorted
-	
+
 	// print songs
-	public void printSongs()
-	{
+	public void printSongs() {
 		SongNode curr = head;
-		while (curr.next() != null)
-		{
+		while (curr.next() != null) {
 			System.out.println(curr.elem() + " ");
 			curr = curr.next();
 		}
 		System.out.println();
 	}
-	
-	
-	
-	
 
 }
