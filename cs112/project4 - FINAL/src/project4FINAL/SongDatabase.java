@@ -3,7 +3,7 @@ package project4FINAL;
 public class SongDatabase {
 	
 	private SongList songs;
-	private String artist, songName;
+	//private String artist, songName;
 
 	
 	public SongDatabase()
