@@ -1,9 +1,8 @@
 package project4FINAL;
 
 import java.awt.Dimension;
+
 import javax.swing.JFrame;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Driver {
 	public static void main(String[] args) {
