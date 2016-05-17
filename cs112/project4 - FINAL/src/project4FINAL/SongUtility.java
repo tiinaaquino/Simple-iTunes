@@ -1,5 +1,6 @@
 package project4FINAL;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -44,7 +45,8 @@ public class SongUtility {
 
 		private void findFile(Path path) {
 			String filename = path.toString();
-			if (filename.contains(pattern)) {
+			if (filename.endsWith(pattern)) {
+				System.out.println(path);
 				Song song = createSong(path);
 				songDatabase.addSong(song);
 			}
@@ -53,9 +55,11 @@ public class SongUtility {
 		private Song createSong(Path path) {
 			Song song = null;
 			try {
-				AudioFile audioFile = AudioFileIO.read(path.toFile());
+				AudioFile audioFile = AudioFileIO.read(new File(path.toString()));
+				//Tag tag = audioFile.getTag();
 				Tag tag = audioFile.getTag();
-				String title = tag.getFirst(FieldKey.TITLE);
+				String title = tag
+						.getFirst(FieldKey.TITLE);
 				String artist = tag.getFirst(FieldKey.ARTIST);
 				String filename = path.toString();
 				song = new Song(title, artist, filename);
