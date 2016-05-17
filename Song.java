@@ -1,60 +1,57 @@
 package project4FINAL;
 
-
 public class Song implements Comparable<Song>{
 	
-	private String songTitle;
-	private String songArtist;
-	private String songFile;
+	private String title;
+	private String artist;
+	private String filename;
 	
 	// constructor
-	public Song(String songTitle, String songArtist, String songFile)
-	{
-		this.songTitle = songTitle;
-		this.songArtist = songArtist;
-		this.songFile = songFile;
+	public Song(String title, String artist, String filename) {
+		this.title = title;
+		this.artist = artist;
+		this.filename = filename;
 	}
 	
 	// getters
-	public String getSongTitle()
-	{
-		return songTitle;
+	public String getTitle() {
+		return title;
 	}
 	
-	public String getSongArtist()
-	{
-		return songArtist;
+	public String getArtist() {
+		return artist;
 	}
 	
-	public String getSongFile()
-	{
-		return songFile;
+	public String getFilename() {
+		return filename;
 	}
 	
 	// setters
-	public void setSongTitle(String title)
-	{
-		songTitle = title;
+	public void setSongTitle(String songTitle) {
+		title = songTitle;
 	}
 	
-	public void setSongArtist(String artist)
-	{
-		songArtist = artist;
+	public void setSongArtist(String songArtist) {
+		artist = songArtist;
 	}
 	
-	public void setSongFile(String file)
-	{
-		songFile = file;
+	public void setSongFile(String file) {
+		filename = file;
 	}
 	
 	//String toString
+	@Override
 	public String toString()
 	{
-		return (songTitle + " " + songArtist + " " +  songFile);
+		return (title + " " + artist + " " +  filename);
 	}
 
 	@Override
 	public int compareTo(Song o) {
-		return this.songTitle.compareTo(o.songTitle);
+		return this.title.compareTo(o.title);
+	}
+	
+	public String[] songArray() {
+		return new String[] {title, artist};
 	}
 }
