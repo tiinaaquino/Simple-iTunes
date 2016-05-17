@@ -2,44 +2,35 @@ package project4FINAL;
 
 public class SongDatabase {
 	
-	private SongList list;
+	private SongList songs;
 	private String artist, songName;
-	
-	
-	
-	// Should store private SongList songs
-	// Other variables and methods
-	// FILL IN CODE
 
 	
 	public SongDatabase()
 	{
-		list = new SongList();
+		songs = new SongList();
 	}
 	
 	public void addSong(Song song)
 	{
-		list.insert(song);
+		songs.addSong(song);
 	}
 	
 
 	public SongList getSongList()
 	{
-		return list; 
+		return songs; 
 	}
-
 	
+	public Song getSong(int index) {
+		return songs.getSong(index);
+	}
 	
+	public void setSongList(SongList songList) {
+		this.songs = songList;
+	}
 	
-	// insert by title
-	
-	// find
-	
-	// search
-	
-	// boolean findSong
-	
-	// play
-	
-	//???? create inner class 
+	public SongList search(String title) {
+		return songs.search(title);
+	}
 }
