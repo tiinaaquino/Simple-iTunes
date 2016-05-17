@@ -58,7 +58,7 @@ public class SongUtility {
 			try {
 				File file = path.toFile();
 				if (!file.isHidden()) {
-					System.out.println(path.toString());
+					//System.out.println(path.toString());
 					AudioFile audioFile = AudioFileIO.read(file);
 					Tag tag = audioFile.getTag();					
 					String title = tag.getFirst(FieldKey.TITLE);
