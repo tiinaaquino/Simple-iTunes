@@ -46,23 +46,27 @@ public class SongUtility {
 		private void findFile(Path path) {
 			String filename = path.toString();
 			if (filename.endsWith(pattern)) {
-				System.out.println(path);
+				//System.out.println(path);
 				Song song = createSong(path);
-				songDatabase.addSong(song);
+				if (song != null)
+					songDatabase.addSong(song);
 			}
 		}
 
 		private Song createSong(Path path) {
 			Song song = null;
 			try {
-				AudioFile audioFile = AudioFileIO.read(new File(path.toString()));
-				//Tag tag = audioFile.getTag();
-				Tag tag = audioFile.getTag();
-				String title = tag
-						.getFirst(FieldKey.TITLE);
-				String artist = tag.getFirst(FieldKey.ARTIST);
-				String filename = path.toString();
-				song = new Song(title, artist, filename);
+				File file = path.toFile();
+				if (!file.isHidden()) {
+					System.out.println(path.toString());
+					AudioFile audioFile = AudioFileIO.read(file);
+					Tag tag = audioFile.getTag();					
+					String title = tag.getFirst(FieldKey.TITLE);
+					String artist = tag.getFirst(FieldKey.ARTIST);
+					String filename = path.toString();
+					song = new Song(title, artist, filename);
+				}
+
 			} catch (CannotReadException | IOException | TagException | ReadOnlyFileException
 					| InvalidAudioFrameException e) {
 				e.printStackTrace();
