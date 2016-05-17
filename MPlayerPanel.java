@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -18,18 +16,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
-import javazoom.jl.player.advanced.AdvancedPlayer;
-import javazoom.jl.player.advanced.PlaybackEvent;
-import javazoom.jl.player.advanced.PlaybackListener;
-
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
 
 /**
 *   The GUI Panel for the MPlayer project
@@ -187,6 +176,11 @@ public class MPlayerPanel extends JPanel {
 		updateUI();
 	}
 	
+	/*
+	private class Random {
+		private Player player;
+	}
+	*/
 	private class PlayerThread implements Runnable {
 		private Player player;
 		
