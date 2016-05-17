@@ -5,13 +5,26 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
+import javazoom.jl.player.advanced.AdvancedPlayer;
+import javazoom.jl.player.advanced.PlaybackEvent;
+import javazoom.jl.player.advanced.PlaybackListener;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -25,12 +38,15 @@ import org.jaudiotagger.tag.Tag;
 public class MPlayerPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
+	private static final String PATTERN = ".mp3";
 	private SongDatabase songDatabase; // the class that contains songs
 	
 	// panels
 	JPanel topPanel, bottomPanel;
 	JScrollPane centerPanel;
 	Thread currThread = null;
+	PlayerThread playerThread;
+	DefaultTableModel tableModel;
 	
 	// buttons and search box
 	JButton playButton, stopButton, exitButton, loadMp3Button;
@@ -108,28 +124,14 @@ public class MPlayerPanel extends JPanel {
 				int returnVal = fc.showOpenDialog(MPlayerPanel.this);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File dir = fc.getSelectedFile();
-					// dir is the directory with the mp3 files that the user
-					// selected
 					
-					// FILL IN CODE
-					// - Call the method that recursively traverses
-					// this directory to find all .mp3 files
-					//
-					// - Extract tags, add songs to the SongDatabase and display
-					// them in the table in the center panel
-
-					DirectoryTransverser d = new DirectoryTransverser(songDatabase);
-					d.printFilesAndFolders(dir.toPath());
+					Path path = dir.toPath();
+					SongUtility.addToDatabase(path, PATTERN, songDatabase);
 					
-					String columnNames[] = { "Title", "Artist" };
-					//table = new JTable(columnNames);
-					// ^ not sure if that's correct because will it open a new window?
+					displaySongs(songDatabase.getSongList());
 					
-
-					updateUI();
-
+					//updateUI();
 				}
-
 			}
 			else if (e.getSource() == playButton) {
 				
@@ -137,24 +139,78 @@ public class MPlayerPanel extends JPanel {
 					return;
 				selectedSong = table.getSelectedRow();
 				System.out.println("selected Song = " + selectedSong + " ");
-				
-				// FILL IN CODE
-				// Find the selected song in the SongDatabase and play it
+				Song song = songDatabase.getSong(selectedSong);
+				String filename = song.getFilename();
+				if (playerThread != null) {
+					playerThread.stopSong();
+				}
+				playerThread = new PlayerThread(filename);
+				currThread = new Thread(playerThread);
+				currThread.start();
 				
 			} else if (e.getSource() == stopButton) {
-				//FILL IN CODE: stop playing the song if its currently playing
+				if (playerThread != null)
+					playerThread.stopSong();
 			} else if (e.getSource() == exitButton) {
 				System.exit(0);
 			}
 			
 			else if (e.getSource() == searchButton) {
-				// FILL IN CODE - When the user presses the Search button,
-				// your program should show only the songs that start with the
-				// search word
+				String search = searchBox.getText();
+				SongList songs = null;
+				if (search != null && !search.isEmpty()) {
+					songs = songDatabase.search(search);
+					displaySongs(songs);
+				} else {
+					songs = songDatabase.getSongList();
+					displaySongs(songs);
+				}
 			}
-			
-			
 		} // actionPerformed
 	} // ButtonListener
+
+	private void displaySongs(SongList songs) {
+		String[] columnName = { "Title", "Artist" };
+		tableModel = new DefaultTableModel(columnName, 0) {
+			@Override
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+		};
+		
+		for (Song song: songs) {
+			tableModel.addRow(song.songArray());
+		}
+		
+		table = new JTable(tableModel);
+		centerPanel.getViewport().add(table);
+		updateUI();
+	}
 	
+	private class PlayerThread implements Runnable {
+		private Player player;
+		
+		public PlayerThread(String filename) {
+			FileInputStream fileInputStream;
+			try {
+				fileInputStream = new FileInputStream(filename);
+				player = new Player(fileInputStream);
+			} catch (FileNotFoundException | JavaLayerException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		public void run() {
+			try{
+				player.play();
+			} catch (JavaLayerException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public void stopSong() {
+			player.close();
+		}
+	}
 }
